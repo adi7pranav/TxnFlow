@@ -34,10 +34,6 @@ public class AuthService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    // ------------------------------------------------------------------ //
-    //  REGISTER
-    // ------------------------------------------------------------------ //
-
     @Transactional
     public LoginResponseDTO register(RegisterRequestDTO request) {
 
@@ -49,7 +45,6 @@ public class AuthService {
             throw new IllegalArgumentException("Email already registered: " + request.getEmail());
         }
 
-        // Default role is CUSTOMER unless explicitly provided
         Role role = request.getRole() != null ? request.getRole() : Role.CUSTOMER;
 
         User user = User.builder()
@@ -74,14 +69,7 @@ public class AuthService {
 
         return buildLoginResponse(token, userDetails);
     }
-
-    // ------------------------------------------------------------------ //
-    //  LOGIN
-    // ------------------------------------------------------------------ //
-
     public LoginResponseDTO login(LoginRequestDTO request) {
-
-        // Throws BadCredentialsException if credentials are wrong
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
@@ -93,10 +81,6 @@ public class AuthService {
 
         return buildLoginResponse(token, userDetails);
     }
-
-    // ------------------------------------------------------------------ //
-    //  Shared helper
-    // ------------------------------------------------------------------ //
 
     private LoginResponseDTO buildLoginResponse(String token, UserDetails userDetails) {
         return LoginResponseDTO.builder()
